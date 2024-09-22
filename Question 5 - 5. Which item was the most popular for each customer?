@@ -1,0 +1,24 @@
+WITH CTE3 AS 
+(
+  SELECT 
+       s.cunstomer_id,
+       m.product_name,
+       COUNT(*) AS item_quantity
+ FROM sales s
+ JOIN menu m 
+ ON s.product_id = m.product_id
+ GROUP BY s.customer_id, m.prodduct_name
+),
+  CTE4 AS
+(
+  SELECT 
+       customer_id,
+       product_name
+       RANK() OVER(PARTITION BY customer_id ORDER BY item_quantity DESC) AS rank
+)
+SELECT 
+     customer_id, 
+     product_name,
+FROM CTE4
+WHERE rank = 1
+    
