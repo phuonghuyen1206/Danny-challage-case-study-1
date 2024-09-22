@@ -1,0 +1,18 @@
+WITH CTE AS 
+(
+  SELECT 
+      s.customer_id,
+      s.order_date,
+      m.product_name,
+      DENSE_RANK()OVER(PARTITION BY s.customer_id, ORDER BY s.order_date) AS bought_item_order
+  FROM sales 
+  JOIN menu m
+  ON s.product_id = m.product_id
+)
+SELECT
+    customer_id,
+    product_name
+FROM CTE
+WHERE  bought _item_order = 1
+GROUP BY  customer_id, product_name
+ORDER BY customer_id
