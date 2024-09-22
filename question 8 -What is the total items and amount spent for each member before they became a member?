@@ -1,0 +1,11 @@
+SELECT
+     s.cutomer_id,
+     COUNT(*) AS total_item_before_join,
+     SUM(m.price) AS total_spent_before_join
+FROM sales s
+JOIN menu m
+ON s.product_id = m.product_id
+LEFT JOIN members mem
+ON s.customer_id = mem.customer_id
+WHERE mem.join_date > s.order_date
+GROUP BY s.customer_id
