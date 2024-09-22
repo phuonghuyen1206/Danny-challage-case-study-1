@@ -1,1 +1,20 @@
-1
+SELECT 
+     s.customer_id,
+     m. product_name AS purchased_item_before_join
+FROM sales
+JOIN menu m
+ON s.product_id = m.product_id
+JOIN
+(
+  SELECT 
+      s.customer_id,
+      MAX(s.order_date) AS first_date_joined
+  FROM sales s
+  JOIN menu m
+  ON s.product_id = m.product_id
+  LEFT JOIN members mem
+  ON s.customer_id = mem.customer_id
+  WHERE mem.join_date > s.order-date
+  GROUP BY s.customer_id
+) AS CTE6
+ON s.customer_id = CTE6. customer-id AND s.order_date = CTE6.first_date_joined
