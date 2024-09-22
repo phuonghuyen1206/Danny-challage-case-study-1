@@ -1,0 +1,24 @@
+WITH CTE8 AS
+(
+  SELECT 
+      s.customer_id,
+      m.product_name,
+      m.price,
+      s.order_date,
+      mem.join_date,
+      CASE WHEN m.product_name = 'sushi' AND (s.order_date < mem.join_date OR DATEDIFF(DAY, mem.join_date, s.order_date) + 1 >7) THEN m.price * 20
+           WHEN m.product_name != 'sushi' AND (s.order_date < mem.join_date OR DATEDIFF(DAY, mem.join_date, s.order_date) + 1 >7) THEN m.price * 10
+           WHEN DATEDIFF(DAY, mem.join_date, s.order_date) + 1 <=7 AND DATEDIFF(DAY, mem.join_date, s.order_date) + 1 >= 0 THEN m.price * 20 
+      END AS test
+FROM sales s 
+JOIN menu 
+ON s.product_id = m. product_id
+LEFT JOIN members mem
+ON s.customer_id = mem.customer_id
+)
+SELECT 
+     customer_id,
+     SUM(test) AS total_point
+FROM CTE8
+WHERE DATEPART(MONTH, order_date) = 1
+GROUP BY customer_id
