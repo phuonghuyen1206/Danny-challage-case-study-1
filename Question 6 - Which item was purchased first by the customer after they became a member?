@@ -1,0 +1,18 @@
+SELECT 
+     s.customer_id,
+     m. product_name AS first_join_day_item
+FROM sales
+JOIN menu m
+ON s.product_id = m.product_id
+JOIN
+(
+  SELECT 
+      s.customer_id,
+      MIN(s.order_date) AS first_date_joined
+  FROM sales s
+  LEFT JOIN members mem
+  ON s.customer_id = mem.customer_id
+  WHERE mem.join_date <= s.order-date
+  GROUP BY s.customer_id
+) AS CTE5
+ON s.customer_id = CTE5. customer-id AND s.order_date = CTE5.first_date_joined
